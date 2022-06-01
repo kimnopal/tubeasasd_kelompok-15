@@ -40,14 +40,21 @@ while True:
     img = detector.findHands(img)
 
     lmList = detector.findPosition(img, draw=False)
-
+    
     # mengecek apakah ada tangan yang terdeteksi
     if len(lmList) != 0:
         # list untuk menampung jari mana saja yang membuka
         fingers = []
 
+        # mengecek jempol
+        # membandingkan sumbu x pada titik ujung jempol apakah koordinatnya lebih rendah daripada titik dibawahnya (artinya jari membuka)
+        if lmList[tipIds[0]][1] > lmList[tipIds[0]-1][1]:
+            fingers.append(1)
+        else:
+            fingers.append(0)
+
         # melakukan perulangan untuk mengecek semua titik ujung jari kecuali jempol
-        for id in range(0, 5):
+        for id in range(1, 5):
             # membandingkan sumbu y pada titik ujung jari apakah koordinatnya lebih rendah daripada 2 titik dibawahnya (artinya jari membuka)
             if lmList[tipIds[id]][2] < lmList[tipIds[id]-2][2]:
                 fingers.append(1)
@@ -56,7 +63,15 @@ while True:
 
         # mengambil jumlah jari yang terbuka
         totalFingers = fingers.count(1)
-        print(totalFingers)
+        # print(totalFingers)
+
+        # merender foto diatas img/video yang posisinya sesuai dengan lebar dan tinggi foto dan jumlah jari yang terbuka
+        h, w, c = overlayList[totalFingers-1].shape
+        img[0:h, 0:w] = overlayList[totalFingers-1]
+
+        # merender angka
+        cv2.rectangle(img, (20, 255), (170, 425), (0, 255, 0), cv2.FILLED)
+        cv2.putText(img, str(totalFingers), (45, 375), cv2.FONT_HERSHEY_PLAIN, 10, (255, 0, 0), 25)
 
     # untuk menghitung fps
     cTime = time.time()
