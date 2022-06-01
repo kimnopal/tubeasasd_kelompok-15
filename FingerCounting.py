@@ -50,13 +50,13 @@ tipIds = [4, 8, 12, 16, 20]
 # untuk mengecek posisi jempol
 def thumbChecker(noHand):
     # membandingkan nilai x dari titik 1 dan 0 pada tangan
-    if lmList[noHand][1][1] > lmList[noHand][0][1]: # (tangan kanan)
-            # membandingkan nilai x dari titik 4 dan 3 pada jempol
-            if lmList[noHand][tipIds[0]][1] > lmList[noHand][tipIds[0]-1][1]:
-                fingers.append(1)
-            else:
-                fingers.append(0)
-    else: # (tangan kiri)
+    if lmList[noHand][1][1] > lmList[noHand][0][1]:
+        # membandingkan nilai x dari titik 4 dan 3 pada jempol
+        if lmList[noHand][tipIds[0]][1] > lmList[noHand][tipIds[0]-1][1]:
+            fingers.append(1)
+        else:
+            fingers.append(0)
+    else:
         # membandingkan nilai x dari titik 4 dan 3 pada jempol
         if lmList[noHand][tipIds[0]][1] < lmList[noHand][tipIds[0]-1][1]: # jari membuka
             fingers.append(1)
@@ -105,6 +105,19 @@ while True:
 
         # mengambil jumlah jari yang terbuka
         totalFingers = fingers.count(1)
+
+        newFingers = ''.join(str(e) for e in fingers)
+        if newFingers == '01110':
+            totalFingers = 6
+        if newFingers == '01101':
+            totalFingers = 7
+        if newFingers == '01011':
+            totalFingers = 8
+        if newFingers == '00111':
+            totalFingers = 9
+        if newFingers == '10000':
+            totalFingers = 10
+        print(fingers)
 
         # merender foto diatas img/video yang posisinya sesuai dengan lebar dan tinggi foto dan jumlah jari yang terbuka
         h, w, c = overlayList[totalFingers-1].shape
