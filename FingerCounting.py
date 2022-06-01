@@ -21,8 +21,8 @@ wCam, hCam = 640, 480
 cap = cv2.VideoCapture(0)
 
 # men-set lebar dan tinggi kamera
-cap.set(3, wCam)
 cap.set(4, hCam)
+cap.set(3, wCam)
 
 # mengambil semua nama foto
 folderPath = "images"
@@ -74,12 +74,13 @@ def fingerChecker(noHand):
 while True:
     # membuat/membaca frame kamera
     success, img = cap.read()
+    img_flip = cv2.flip(img,1)
 
     # membuat img/video baru yang sudah mendeteksi tangan
-    img = detector.findHands(img)
+    img_flip = detector.findHands(img_flip)
 
     # mengambil posisi titik pada jari
-    lmList = detector.findPosition(img, draw=False)
+    lmList = detector.findPosition(img_flip, draw=False)
 
     # mengecek apakah ada tangan yang terdeteksi
     if len(lmList[0]) != 0:
@@ -107,11 +108,11 @@ while True:
 
         # merender foto diatas img/video yang posisinya sesuai dengan lebar dan tinggi foto dan jumlah jari yang terbuka
         h, w, c = overlayList[totalFingers-1].shape
-        img[0:h, 0:w] = overlayList[totalFingers-1]
+        img_flip[0:h, 0:w] = overlayList[totalFingers-1]
 
         # merender angka
-        cv2.rectangle(img, (20, 350), (170, 450), (0, 255, 0), cv2.FILLED)
-        cv2.putText(img, str(totalFingers), (45, 430), cv2.FONT_HERSHEY_PLAIN, 5, (255, 0, 0), 10)
+        cv2.rectangle(img_flip, (20, 350), (170, 450), (255, 255, 255), cv2.FILLED)
+        cv2.putText(img_flip, str(totalFingers), (45, 430), cv2.FONT_HERSHEY_PLAIN, 5, (20, 20, 20), 10)
 
     # untuk menghitung fps
     cTime = time.time()
@@ -119,10 +120,10 @@ while True:
     pTime = cTime
 
     # menambahkan text fps ke img/video
-    cv2.putText(img, f'FPS : {int(fps)}', (400, 70),
-                cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3)
+    cv2.putText(img_flip, f'FPS : {int(fps)}', (480, 40),
+                cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 3)
 
     # merender img/video dan menajalankan kamera
-    cv2.imshow("Image", img)
+    cv2.imshow("Image", img_flip)
     # untuk memberikan delay 1ms
     cv2.waitKey(1)
