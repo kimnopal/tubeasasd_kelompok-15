@@ -8,7 +8,6 @@ Anggota Kelompok :
 - Ghoni Dzulqurnain (H1A021071)
 copyright 2022
 '''
-
 import cv2
 import mediapipe as mp
 import time
@@ -48,29 +47,24 @@ class handDetector():
 
         return img
 
-    def findPosition(self, img, draw=True):
-        # menyimpan koordinat semua titik pada kedua tangan
-        lmList = [[], []]
+    def findPosition(self, img, handNo=0, draw=True):
+        # menyimpan koordinat semua titik pada tangan
+        lmList = []
 
         # mengecek apakah ada tangan yang terdeteksi
         if self.results.multi_hand_landmarks:
             # mengambil salah satu tangan sesuai dengan nomor tangan
             myHand = self.results.multi_hand_landmarks
 
-            # mengambil koordinaat masing masing tangan
             for hand in myHand:
-                # mengambil informasi dari titik di setiap tangan (berupa nomor id dan koordinat xyz)
+            # mengambil informasi dari titik di setiap tangan (berupa nomor id dan koordinat xyz)
                 for id, lm in enumerate(hand.landmark):
                     # mengambil lebar dan tinggi dari image untuk dikalikan dengan koordinat agar mendapatkan posisi satuan pixel
                     h, w, c = img.shape
                     cx, cy = int(lm.x*w), int(lm.y*h)
 
                     # memasukkan koordinat tiap titik pada tangan ke list
-                    if(myHand.index(hand) == 0):
-                        lmList[0].append([id, cx, cy])
-                    else:
-                        lmList[1].append([id, cx, cy])
-
+                    lmList.append([id, cx, cy])
 
                     # mengecek apakah perlu di gambar
                     if draw:
@@ -97,9 +91,7 @@ def main():
         img = detector.findHands(img)
 
         # menampung posisi koordinat tiap titik pada tangan
-        lmList = detector.findPosition(img, draw=False)
-        if len(lmList) != 0:
-            print(len(lmList))
+        lmList = detector.findPosition(img)
 
         # untuk menghitung fps
         cTime = time.time()

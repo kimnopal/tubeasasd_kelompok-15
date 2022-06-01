@@ -23,12 +23,50 @@ for imPath in myList:
     # mengimport foto
     image = cv2.imread(f'{folderPath}/{imPath}')
     overlayList.append(image)
-print(len(overlayList))
+
+pTime = 0
+
+# instansiasi class
+detector = htm.handDetector(detectionCon=0.75)
+
+# list kumpulan titik ujung jari 
+tipIds = [4, 8, 12, 16, 20]
 
 while True:
     # membuat/membaca frame kamera
     success, img = cap.read()
-    print(len(overlayList))
+
+    # membuat img/video baru yang sudah mendeteksi tangan
+    img = detector.findHands(img)
+
+    lmList = detector.findPosition(img, draw=False)
+
+    # mengecek apakah ada tangan yang terdeteksi
+    if len(lmList) != 0:
+        # list untuk menampung jari mana saja yang membuka
+        fingers = []
+
+        # melakukan perulangan untuk mengecek semua titik ujung jari kecuali jempol
+        for id in range(0, 5):
+            # membandingkan sumbu y pada titik ujung jari apakah koordinatnya lebih rendah daripada 2 titik dibawahnya (artinya jari membuka)
+            if lmList[tipIds[id]][2] < lmList[tipIds[id]-2][2]:
+                fingers.append(1)
+            else:
+                fingers.append(0)
+
+        # mengambil jumlah jari yang terbuka
+        totalFingers = fingers.count(1)
+        print(totalFingers)
+
+    # untuk menghitung fps
+    cTime = time.time()
+    fps = 1/(cTime-pTime)
+    pTime = cTime
+
+    # menambahkan text fps ke img/video
+    cv2.putText(img, f'FPS : {int(fps)}', (400, 70),
+                cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3)
+
     # merender img/video dan menajalankan kamera
     cv2.imshow("Image", img)
     # untuk memberikan delay 1ms
