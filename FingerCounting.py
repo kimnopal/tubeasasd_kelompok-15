@@ -38,7 +38,7 @@ for imPath in myList:
     image = cv2.imread(f'{folderPath}/{imPath}')
     overlayList.append(image)
 
-
+# totalFingers = 0
 pTime = 0
 
 # instansiasi class
@@ -87,38 +87,61 @@ while True:
         # list untuk menampung jari mana saja yang membuka
         fingers = []
 
+        print(len(lmList[0]))
+        print(len(lmList[1]))
+
         # mengecek jempol pada 1 tangan
         thumbChecker(0)
-
+        
         # mengecek apakah ada 2 tangan dilayar
         if(len(lmList[1]) != 0):
-            thumbChecker(1) # mengecek jempol pada tangan yang satu lagi (membuka/menutup)
-
-        # melakukan perulangan untuk mengecek semua titik ujung jari kecuali jempol
-        for id in range(1, 5):
-            # mengecek jari pada 1 tangan
-            fingerChecker(0)
-
-            # mengecek apakah ada 2 tangan dilayar
-            if(len(lmList[1]) != 0):
-                fingerChecker(1) # mengecek jari pada tangan yang satu lagi (membuka/menutup)
-
-        # mengambil jumlah jari yang terbuka
+            thumbChecker(1) # mengecek jempol pada tangan yang satu lagi (membuka/menutup)'
+        
         totalFingers = fingers.count(1)
+        
+        if(len(lmList[1]) == 0):
+            # melakukan perulangan untuk mengecek semua titik ujung jari kecuali jempol
+            for id in range(1, 5):
+                # mengecek jari pada 1 tangan
+                fingerChecker(0)
+            newFingers = ''.join(str(e) for e in fingers)
+            if newFingers == '01000':
+                totalFingers = 1
+            elif newFingers == '01100':
+                totalFingers = 2
+            elif newFingers == '11100':
+                totalFingers = 3
+            elif newFingers == '01111':
+                totalFingers = 4
+            elif newFingers == '11111':
+                totalFingers = 5
+            elif newFingers == '01110':
+                totalFingers = 6
+            elif newFingers == '01101':
+                totalFingers = 7
+            elif newFingers == '01011':
+                totalFingers = 8
+            elif newFingers == '00111':
+                totalFingers = 9
+            elif newFingers == '10000':
+                totalFingers = 10
+            else:
+                totalFingers = fingers.count(1)
+            print(fingers)
 
-        newFingers = ''.join(str(e) for e in fingers)
-        if newFingers == '01110':
-            totalFingers = 6
-        if newFingers == '01101':
-            totalFingers = 7
-        if newFingers == '01011':
-            totalFingers = 8
-        if newFingers == '00111':
-            totalFingers = 9
-        if newFingers == '10000':
-            totalFingers = 10
-        print(fingers)
+        elif(len(lmList[1]) == 21 and len(lmList[0]) == 21):
+            # melakukan perulangan untuk mengecek semua titik ujung jari kecuali jempol
+            for id in range(1, 5):
+                # mengecek jari pada 1 tangan
+                fingerChecker(0)
 
+                # mengecek apakah ada 2 tangan dilayar
+                if(len(lmList[1]) != 0):
+                    fingerChecker(1) # mengecek jari pada tangan yang satu lagi (membuka/menutup)
+
+            # mengambil jumlah jari yang terbuka
+            totalFingers = fingers.count(1)
+            
         # merender foto diatas img/video yang posisinya sesuai dengan lebar dan tinggi foto dan jumlah jari yang terbuka
         h, w, c = overlayList[totalFingers-1].shape
         img_flip[0:h, 0:w] = overlayList[totalFingers-1]
