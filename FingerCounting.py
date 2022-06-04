@@ -109,13 +109,13 @@ while True:
         newFingers = ''.join(str(e) for e in fingers)
         if newFingers == '01110':
             totalFingers = 6
-        if newFingers == '01101':
+        elif newFingers == '01101':
             totalFingers = 7
-        if newFingers == '01011':
+        elif newFingers == '01011':
             totalFingers = 8
-        if newFingers == '00111':
+        elif newFingers == '00111':
             totalFingers = 9
-        if newFingers == '10000':
+        elif newFingers == '10000':
             totalFingers = 10
 
         # merender foto diatas img/video yang posisinya sesuai dengan lebar dan tinggi foto dan jumlah jari yang terbuka
