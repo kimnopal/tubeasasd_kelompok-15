@@ -117,7 +117,6 @@ while True:
             totalFingers = 9
         if newFingers == '10000':
             totalFingers = 10
-        print(fingers)
 
         # merender foto diatas img/video yang posisinya sesuai dengan lebar dan tinggi foto dan jumlah jari yang terbuka
         h, w, c = overlayList[totalFingers-1].shape
